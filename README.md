@@ -14,4 +14,3 @@
 ### Find `.jar`-file
 - Source code: The .jar-file can be found in the `out/`-directory. Then follow the steps above. 
 - You might also have downloaded only the `.jar`-file
--  
