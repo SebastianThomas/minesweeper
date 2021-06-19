@@ -4,8 +4,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public abstract class SweeperButton extends JButton {
-    private boolean revealed;
-    private boolean rightClicked;
+    protected boolean revealed;
+    protected boolean rightClicked;
 
     private MineSweeper game;
     private int x;
@@ -36,7 +36,7 @@ public abstract class SweeperButton extends JButton {
     public void emitReveal() {
         try {
             // If current button is not revealed, and the game is still running
-            if (!this.revealed && !this.game.gameOver) {
+            if (!this.revealed && !this.game.gameOver && !this.rightClicked) {
                 this.revealed = true;
                 this.reveal();
                 this.game.newReveal(this, this.x, this.y);
@@ -48,18 +48,41 @@ public abstract class SweeperButton extends JButton {
         }
     }
 
+    public void emitReveal(boolean gameOver) {
+        if (gameOver) {
+            try {
+                this.reveal(true);
+            } catch (BombException exception) {
+                this.setForeground(Color.ORANGE);
+                this.setText("B");
+            }
+        }
+    }
+
     public void rightClick() {
         if (!rightClicked) {
             this.setForeground(Color.CYAN);
             this.setText("F");
             this.rightClicked = true;
+
+            this.game.newRightClick(this);
         } else {
             this.setText("");
             this.rightClicked = false;
+            this.game.removeRightClick(this);
+        }
+    }
+
+    public void rightClick(boolean gameOver) {
+        if (gameOver) {
+            this.setForeground(Color.CYAN);
+            this.setText("F");
         }
     }
 
     public abstract void reveal() throws BombException;
+
+    public abstract void reveal(boolean gameOver) throws BombException;
 
     public abstract int getBombsAround() throws UnsupportedOperationException;
 }
@@ -74,8 +97,18 @@ class EmptySweeperButton extends SweeperButton {
 
     @Override
     public void reveal() {
-        this.setForeground(Color.LIGHT_GRAY);
+        this.setForeground(Color.WHITE);
         this.setText(this.bombsAround != 0 ? String.valueOf(this.bombsAround) : "");
+    }
+
+    @Override
+    public void reveal(boolean gameOver) {
+        int rgb = this.bombsAround == 0 ? 180 : 255;
+        if (this.revealed) rgb = 80;
+        this.setForeground(new Color(rgb, rgb, rgb));
+
+        if (gameOver) this.setText(String.valueOf(this.bombsAround));
+        else this.setText(this.bombsAround != 0 ? String.valueOf(this.bombsAround) : "");
     }
 
     @Override
@@ -91,6 +124,11 @@ class BombSweeperButton extends SweeperButton {
 
     @Override
     public void reveal() throws BombException {
+        throw new BombException();
+    }
+
+    @Override
+    public void reveal(boolean b) throws BombException {
         throw new BombException();
     }
 

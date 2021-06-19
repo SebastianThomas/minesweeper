@@ -1,7 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MineSweeper extends JPanel {
     public static final int ROWS = 24;
@@ -15,6 +20,7 @@ public class MineSweeper extends JPanel {
     private HashMap<Integer, SweeperButton> buttonMap;
     private boolean[][] field;
     private int revealed;
+    private Set<SweeperButton> rightClicked;
 
     private TopPanel topPanel;
 
@@ -22,6 +28,7 @@ public class MineSweeper extends JPanel {
         this.revealed = 0;
 
         this.topPanel = topPanel;
+        this.addKeyListener(new SweeperKeyboardAdapter(this));
 
         // Bombs
         this.field = new boolean[ROWS][COLS];
@@ -56,10 +63,13 @@ public class MineSweeper extends JPanel {
         for (Map.Entry<Integer, SweeperButton> e : this.buttonMap.entrySet()) {
             this.add(e.getValue());
         }
+
+        this.rightClicked = new HashSet<>();
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
+
         JPanel container = new JPanel();
 
         // Top Panel
@@ -73,6 +83,8 @@ public class MineSweeper extends JPanel {
         container.add(mineSweeperGame, BorderLayout.CENTER);
 
         // Init frame
+        frame.getRootPane().setDefaultButton(topPanel.getStartAgainButton());
+
         frame.add(container);
         frame.setSize(1050, 1000);
 
@@ -99,6 +111,14 @@ public class MineSweeper extends JPanel {
         } else {
             this.revealSurroundingFields(button, x, y);
         }
+    }
+
+    public void newRightClick(SweeperButton button) {
+        this.rightClicked.add(button);
+    }
+
+    public void removeRightClick(SweeperButton toRemoveButton) {
+        this.rightClicked = this.rightClicked.stream().filter(b -> b != toRemoveButton).collect(Collectors.toSet());
     }
 
     public void bombFired(int x, int y) {
@@ -129,27 +149,54 @@ public class MineSweeper extends JPanel {
     }
 
     private void revealAllFields() {
-        // TODO
+        for (int i = 0; i < COLS; i++) {
+            for (int j = 0; j < ROWS; j++) {
+                int buttonIndex = (i) * COLS + (j);
+                SweeperButton button = this.buttonMap.get(buttonIndex);
+
+                button.emitReveal(true);
+            }
+        }
+
+        SwitchFlagNrThread runnable = new SwitchFlagNrThread(this.rightClicked);
+        Thread t = new Thread(runnable);
+
+        t.start();
     }
 
     private void setGameLostLabel() {
         this.topPanel.gameOver(false);
+    }
+
+    public void enterPressed() {
+        if (this.topPanel.isGameOver()) this.topPanel.startNewGame();
     }
 }
 
 class TopPanel extends JPanel {
     private JFrame frameToDispose;
     private JLabel label;
+    private JButton startAgainButton;
+    private boolean gameOver;
 
     public TopPanel(JFrame frameToDispose) {
+        this.gameOver = false;
+
         this.frameToDispose = frameToDispose;
         this.label = new JLabel("Minesweeper");
         this.add(this.label);
 
         this.label.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 24));
+
+        this.startAgainButton = new JButton("Erneut probieren?");
+        this.startAgainButton.addActionListener(e -> {
+            this.startNewGame();
+        });
     }
 
     public void gameOver(boolean won) {
+        this.gameOver = true;
+
         if (won) {
             label.setForeground(new Color(0, 255, 0));
             label.setText("Sie haben gewonnen!");
@@ -158,11 +205,66 @@ class TopPanel extends JPanel {
             label.setText("Sie haben eine Bombe getroffen!");
         }
 
-        JButton playAgainButton = new JButton("Erneut probieren?");
-        playAgainButton.addActionListener(e -> {
-            frameToDispose.dispose();
-            MineSweeper.main(new String[0]);
-        });
-        this.add(playAgainButton);
+        this.add(this.startAgainButton);
+    }
+
+    public JButton getStartAgainButton() {
+        return this.startAgainButton;
+    }
+
+    public void startNewGame() {
+        frameToDispose.dispose();
+        MineSweeper.main(new String[0]);
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+}
+
+class SweeperKeyboardAdapter implements KeyListener {
+    private MineSweeper game;
+
+    public SweeperKeyboardAdapter(MineSweeper game) {
+        this.game = game;
+    }
+
+    /**
+     * Invoked when a key has been typed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key typed event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyTyped(KeyEvent e) {
+        System.out.println("Key typed");
+    }
+
+    /**
+     * Invoked when a key has been pressed.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key pressed event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyPressed(KeyEvent e) {
+        System.out.println("Key typed");
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            this.game.enterPressed();
+        }
+    }
+
+    /**
+     * Invoked when a key has been released.
+     * See the class description for {@link KeyEvent} for a definition of
+     * a key released event.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void keyReleased(KeyEvent e) {
+        System.out.println("Key typed");
     }
 }
