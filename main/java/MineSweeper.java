@@ -20,14 +20,17 @@ public class MineSweeper extends JPanel {
     private HashMap<Integer, SweeperButton> buttonMap;
     private boolean[][] field;
     private int revealed;
+    private int nrOfRevealedFlags;
     private Set<SweeperButton> rightClicked;
 
     private TopPanel topPanel;
 
     public MineSweeper(TopPanel topPanel) {
         this.revealed = 0;
+        this.nrOfRevealedFlags = 0;
 
         this.topPanel = topPanel;
+        this.topPanel.setFlagsLeft(BOMBS);
         this.addKeyListener(new SweeperKeyboardAdapter(this));
 
         // Bombs
@@ -113,12 +116,20 @@ public class MineSweeper extends JPanel {
         }
     }
 
+    public int getFlagsLeft() {
+        return BOMBS - this.nrOfRevealedFlags;
+    }
+
     public void newRightClick(SweeperButton button) {
         this.rightClicked.add(button);
+        this.nrOfRevealedFlags++;
+        this.topPanel.setFlagsLeft(BOMBS - this.nrOfRevealedFlags);
     }
 
     public void removeRightClick(SweeperButton toRemoveButton) {
         this.rightClicked = this.rightClicked.stream().filter(b -> b != toRemoveButton).collect(Collectors.toSet());
+        this.nrOfRevealedFlags--;
+        this.topPanel.setFlagsLeft(BOMBS - this.nrOfRevealedFlags);
     }
 
     public void bombFired(int x, int y) {
@@ -178,20 +189,36 @@ class TopPanel extends JPanel {
     private JLabel label;
     private JButton startAgainButton;
     private boolean gameOver;
+    private JLabel flagsLeft;
 
     public TopPanel(JFrame frameToDispose) {
         this.gameOver = false;
 
+        this.setBackground(Color.BLACK);
+        this.setForeground(Color.LIGHT_GRAY);
+
         this.frameToDispose = frameToDispose;
+
         this.label = new JLabel("Minesweeper");
+        this.label.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 24));
+        this.label.setForeground(Color.LIGHT_GRAY);
+        this.label.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 25));
         this.add(this.label);
 
-        this.label.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 24));
+        this.flagsLeft = new JLabel();
+        this.flagsLeft.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 20));
+        this.flagsLeft.setForeground(Color.CYAN);
+        this.label.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 50));
+        this.add(this.flagsLeft);
 
         this.startAgainButton = new JButton("Erneut probieren?");
         this.startAgainButton.addActionListener(e -> {
             this.startNewGame();
         });
+    }
+
+    public void setFlagsLeft(int flagsLeft) {
+        this.flagsLeft.setText("Flags left: " + flagsLeft);
     }
 
     public void gameOver(boolean won) {

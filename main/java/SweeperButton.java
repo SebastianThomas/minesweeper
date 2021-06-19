@@ -61,6 +61,7 @@ public abstract class SweeperButton extends JButton {
 
     public void rightClick() {
         if (!rightClicked) {
+            if (!(this.game.getFlagsLeft() > 0)) return;
             this.setForeground(Color.CYAN);
             this.setText("F");
             this.rightClicked = true;
