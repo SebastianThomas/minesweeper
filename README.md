@@ -4,7 +4,7 @@
 - You can either download the `.jar`-file from newest release, if you just want to play the game. 
 - The source code can be downloaded in several versions: 
     - the latest full release (watch at the right side for the `Releases`, that is the newest)
-    - the latest early access-preview (`Releases` --> `X tags` --> click the latest release)
+    - the latest early access-preview (`Releases` --> `X tags` --> click the latest release _(You should only use Early Access-releases if you do want to test this app, since they might not be stable)_)
     - any current branch (`master` is the main branch, there might be some more feature branches --> Download source code)
 
 ## Run
