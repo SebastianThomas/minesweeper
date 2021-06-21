@@ -25,7 +25,7 @@ public class MineSweeper extends JPanel {
 
     private TopPanel topPanel;
 
-    public MineSweeper(TopPanel topPanel) {
+    public MineSweeper(TopPanel topPanel, boolean revealFirstSelected) {
         this.revealed = 0;
         this.nrOfRevealedFlags = 0;
 
@@ -68,18 +68,20 @@ public class MineSweeper extends JPanel {
         }
 
         this.rightClicked = new HashSet<>();
+
+        if (revealFirstSelected) this.revealFirstZero();
     }
 
-    public static void main(String[] args) {
+    public static void start(boolean revealFirstSelected) {
         JFrame frame = new JFrame();
 
         JPanel container = new JPanel();
 
         // Top Panel
-        TopPanel topPanel = new TopPanel(frame);
+        TopPanel topPanel = new TopPanel(frame, revealFirstSelected);
 
         // Init game panel
-        MineSweeper mineSweeperGame = new MineSweeper(topPanel);
+        MineSweeper mineSweeperGame = new MineSweeper(topPanel, revealFirstSelected);
 
         container.setLayout(new BorderLayout());
         container.add(topPanel, BorderLayout.NORTH);
@@ -95,6 +97,30 @@ public class MineSweeper extends JPanel {
         frame.setLocationRelativeTo(null);
 
         frame.setVisible(true);
+    }
+
+    public void revealFirstZero() {
+        int nr = (int) (Math.random() * ROWS * COLS);
+        int y = nr % COLS;
+        int x = (nr - y) / COLS;
+
+        try {
+            if (this.buttonMap.get(x * COLS + y).getBombsAround() != 0) throw new Exception();
+            System.out.println(x * COLS + y);
+            System.out.println(this.buttonMap.get(x * COLS + y).getBombsAround());
+
+            Runnable r = () -> {
+                try {
+                    Thread.sleep(650);
+                } catch (InterruptedException ignored) {
+                }
+                this.buttonMap.get(x * COLS + y).emitReveal();
+            };
+            Thread t = new Thread(r);
+            t.start();
+        } catch (Exception ignored) {
+            revealFirstZero();
+        }
     }
 
     public int[] getNewPos() {
@@ -185,14 +211,16 @@ public class MineSweeper extends JPanel {
 }
 
 class TopPanel extends JPanel {
+    private final boolean revealFirstSelected;
     private JFrame frameToDispose;
     private JLabel label;
     private JButton startAgainButton;
     private boolean gameOver;
     private JLabel flagsLeft;
 
-    public TopPanel(JFrame frameToDispose) {
+    public TopPanel(JFrame frameToDispose, boolean revealFirstSelected) {
         this.gameOver = false;
+        this.revealFirstSelected = revealFirstSelected;
 
         this.setBackground(Color.BLACK);
         this.setForeground(Color.LIGHT_GRAY);
@@ -241,7 +269,7 @@ class TopPanel extends JPanel {
 
     public void startNewGame() {
         frameToDispose.dispose();
-        MineSweeper.main(new String[0]);
+        MineSweeper.start(revealFirstSelected);
     }
 
     public boolean isGameOver() {
