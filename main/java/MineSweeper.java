@@ -106,8 +106,6 @@ public class MineSweeper extends JPanel {
 
         try {
             if (this.buttonMap.get(x * COLS + y).getBombsAround() != 0) throw new Exception();
-            System.out.println(x * COLS + y);
-            System.out.println(this.buttonMap.get(x * COLS + y).getBombsAround());
 
             Runnable r = () -> {
                 try {
@@ -293,7 +291,6 @@ class SweeperKeyboardAdapter implements KeyListener {
      */
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println("Key typed");
     }
 
     /**
@@ -305,7 +302,6 @@ class SweeperKeyboardAdapter implements KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Key typed");
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             this.game.enterPressed();
         }
@@ -320,6 +316,5 @@ class SweeperKeyboardAdapter implements KeyListener {
      */
     @Override
     public void keyReleased(KeyEvent e) {
-        System.out.println("Key typed");
     }
 }

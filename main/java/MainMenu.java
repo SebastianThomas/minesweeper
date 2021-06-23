@@ -42,10 +42,7 @@ public class MainMenu extends JFrame {
         optionsHeading.setForeground(Color.WHITE);
         // Checkbox
         JCheckBox revealFirstCheckBox = new JCheckBox("Eine zufällige 0 bereits aufdecken?", revealFirstSelected);
-        revealFirstCheckBox.addActionListener(e -> {
-            revealFirstSelected = !revealFirstSelected;
-            System.out.println(revealFirstSelected);
-        });
+        revealFirstCheckBox.addActionListener(e -> revealFirstSelected = !revealFirstSelected);
         revealFirstCheckBox.setFocusable(false);
         revealFirstCheckBox.setBackground(Color.BLACK);
         revealFirstCheckBox.setForeground(Color.WHITE);
