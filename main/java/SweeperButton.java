@@ -26,6 +26,7 @@ public abstract class SweeperButton extends JButton {
 
         this.setSize(this.width, this.height);
         this.setBackground(new Color(20, 20, 20));
+        this.setFocusable(false);
 
         this.addActionListener(event -> {
             this.emitReveal();
