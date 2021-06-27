@@ -1,0 +1,1 @@
+package de.sth.minesweeper.constants;
