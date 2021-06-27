@@ -1,18 +1,39 @@
-package updates;
+package de.sth.minesweeper.updates;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Date;
 import java.util.Objects;
 
+import static de.sth.minesweeper.updates.UpdateConstants.UpdateOptions.*;
+
 public class Update {
-    public static void main(String... args) {
+    final UpdateConstants.UpdateOptions option;
+    final boolean ea;
+    final URI uri;
+    final String version;
+
+    public Update(UpdateConstants.UpdateOptions option, boolean isEA, String version) {
+        this.option = option;
+        this.ea = isEA;
+        this.version = version;
+        URI tempURI;
+        try {
+            tempURI = new URI("https://github.com/SebastianThomas/minesweeper/releases/download/" + version + "/minesweeper.jar");
+        } catch (URISyntaxException ignored) {
+            tempURI = null;
+        }
+        this.uri = tempURI;
+    }
+
+    public static Update getUpdateOptions() {
         System.out.println("Checking for updates...");
 
         JSONArray res = getResponse();
@@ -21,26 +42,33 @@ public class Update {
 
         if (Objects.equals(getLatestEARelease(res), UpdateConstants.currentVersion)) {
             System.out.println("Have latest release (might be an Early Access version)");
+            return new Update(UP_TO_DATE, isEA(UpdateConstants.currentVersion), null);
         } else if (Objects.equals(getLatestRelease(res) + "-ea", UpdateConstants.currentVersion)) {
             // For example you have "v2.0-ea" and "v2.0" is latest and available
             System.out.println("The full update for your EA-preview is available!");
+            return new Update(UPDATE_FROM_EA_TO_FULL, false, getLatestRelease(res));
         } else if (Objects.equals(getLatestRelease(res), UpdateConstants.currentVersion)) {
             // Have the latest full release
             if (!Objects.equals(getLatestRelease(res), getLatestEARelease(res))) {
-                System.out.println("BUT THERE IS ANOTHER Early Access RELEASE");
+                System.out.println("THERE IS ANOTHER Early Access RELEASE");
+                return new Update(UPDATE_TO_NEW_EA, true, getLatestEARelease(res));
             } else {
                 System.out.println("Have latest release");
+                return new Update(UP_TO_DATE_WITHOUT_EA, false, null);
             }
         } else if (getReleaseMajorVersion(latestRelease) > getReleaseMajorVersion(UpdateConstants.currentVersion)) {
             // Major patch available
             System.out.println("New MAJOR patch");
+            return new Update(UPDATE_TO_MAJOR, false, getLatestRelease(res));
         } else if (getReleaseMinorVersion(latestRelease) > getReleaseMinorVersion(UpdateConstants.currentVersion)) {
             // Minor patch available
             System.out.println("New MINOR patch");
+            return new Update(UPDATE_TO_MINOR, false, getLatestRelease(res));
         } else {
             // Problem ??
             System.out.println("Are you in development? Otherwise report the following as a bug (https://github.com/SebastianThomas/minesweeper/issues/new):");
             System.out.println("Latest version: " + latestRelease + "; Current version: " + UpdateConstants.currentVersion + "; Time: " + new Date().getTime());
+            return new Update(HAVE_NEWER_VERSION, true, null);
         }
     }
 

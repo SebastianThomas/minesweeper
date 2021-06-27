@@ -1,3 +1,7 @@
+package de.sth.minesweeper;
+
+import de.sth.minesweeper.constants.ColorConstant;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -220,14 +224,14 @@ class TopPanel extends JPanel {
         this.gameOver = false;
         this.revealFirstSelected = revealFirstSelected;
 
-        this.setBackground(Color.BLACK);
-        this.setForeground(Color.LIGHT_GRAY);
+        this.setBackground(ColorConstant.BG_Color);
+        this.setForeground(ColorConstant.FG_LIGHTER_COLOR);
 
         this.frameToDispose = frameToDispose;
 
         this.label = new JLabel("Minesweeper");
         this.label.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 24));
-        this.label.setForeground(Color.LIGHT_GRAY);
+        this.label.setForeground(ColorConstant.FG_LIGHTER_COLOR);
         this.label.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 25));
         this.add(this.label);
 

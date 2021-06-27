@@ -1,3 +1,5 @@
+package de.sth.minesweeper;
+
 import java.util.Set;
 
 public class SwitchFlagNrThread implements Runnable {

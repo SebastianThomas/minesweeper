@@ -1,3 +1,8 @@
+package de.sth.minesweeper;
+
+import de.sth.minesweeper.constants.ColorConstant;
+import de.sth.minesweeper.updates.UpdatePanel;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,14 +12,17 @@ public class MainMenu extends JFrame {
     public MainMenu() {
         super("Minesweeper");
 
-        JPanel contentPanel = new JPanel(new GridLayout(0, 1));
-        contentPanel.setBackground(Color.BLACK);
-        contentPanel.setForeground(Color.WHITE);
+        JPanel contentPanel = new JPanel();
+        BoxLayout l = new BoxLayout(contentPanel, BoxLayout.Y_AXIS);
+        contentPanel.setLayout(l);
+        contentPanel.setBackground(ColorConstant.BG_Color);
+        contentPanel.setForeground(ColorConstant.FG_Color);
 
-        JLabel title = new JLabel("Minesweeper", SwingConstants.CENTER);
+        JLabel title = new JLabel("Minesweeper");
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setFont(new Font(title.getFont().getFontName(), Font.BOLD, 32));
-        title.setBackground(Color.BLACK);
-        title.setForeground(Color.WHITE);
+        title.setBackground(ColorConstant.BG_Color);
+        title.setForeground(ColorConstant.FG_Color);
         contentPanel.add(title);
 
         JButton start = new JButton("START!");
@@ -24,45 +32,49 @@ public class MainMenu extends JFrame {
             this.dispose();
             MineSweeper.start(revealFirstSelected);
         });
-        start.setBackground(Color.BLACK);
-        start.setForeground(Color.WHITE);
+        start.setBackground(ColorConstant.BG_Color);
+        start.setForeground(ColorConstant.FG_Color);
         start.setFocusable(false);
 
         JPanel startPanel = new JPanel();
         startPanel.add(start);
-        startPanel.setBackground(Color.BLACK);
-        startPanel.setForeground(Color.WHITE);
+        startPanel.setBackground(ColorConstant.BG_Color);
+        startPanel.setForeground(ColorConstant.FG_Color);
         contentPanel.add(startPanel);
 
         // OPTIONS
         // Heading
         JLabel optionsHeading = new JLabel("Optionen:", SwingConstants.CENTER);
         optionsHeading.setFont(new Font(title.getFont().getFontName(), Font.BOLD, 28));
-        optionsHeading.setBackground(Color.BLACK);
-        optionsHeading.setForeground(Color.WHITE);
+        optionsHeading.setBackground(ColorConstant.BG_Color);
+        optionsHeading.setForeground(ColorConstant.FG_Color);
         // Checkbox
         JCheckBox revealFirstCheckBox = new JCheckBox("Eine zufällige 0 bereits aufdecken?", revealFirstSelected);
         revealFirstCheckBox.addActionListener(e -> revealFirstSelected = !revealFirstSelected);
         revealFirstCheckBox.setFocusable(false);
-        revealFirstCheckBox.setBackground(Color.BLACK);
-        revealFirstCheckBox.setForeground(Color.WHITE);
+        revealFirstCheckBox.setBackground(ColorConstant.BG_Color);
+        revealFirstCheckBox.setForeground(ColorConstant.FG_Color);
+        // Updates
+        UpdatePanel updatePanel = new UpdatePanel();
         // Options Panel
         JPanel optionsPanel = new JPanel();
         optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
-        optionsPanel.setBackground(Color.BLACK);
-        optionsPanel.setForeground(Color.WHITE);
+        optionsPanel.setBackground(ColorConstant.BG_Color);
+        optionsPanel.setForeground(ColorConstant.FG_Color);
         // Add options
         optionsHeading.setAlignmentX(Component.CENTER_ALIGNMENT);
         optionsPanel.add(optionsHeading);
         revealFirstCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         optionsPanel.add(revealFirstCheckBox);
+        updatePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        optionsPanel.add(updatePanel);
 
         contentPanel.add(optionsPanel);
 
         this.setContentPane(contentPanel);
+        this.setSize(500, 300);
         this.setLocationRelativeTo(null);
-        this.setSize(500, 250);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setVisible(true);
     }
