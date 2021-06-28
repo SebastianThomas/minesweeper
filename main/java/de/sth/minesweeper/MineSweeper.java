@@ -1,6 +1,7 @@
 package de.sth.minesweeper;
 
 import de.sth.minesweeper.constants.ColorConstant;
+import de.sth.minesweeper.difficulties.Difficulty;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,12 +14,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MineSweeper extends JPanel {
-    public static final int ROWS = 24;
-    public static final int COLS = 24;
-    public static final int BOMBS = 99;
-
-    public static final int BUTTON_WIDTH = 40;
-    public static final int BUTTON_HEIGHT = 40;
+    // Game difficulty
+    public static int ROWS = 24;
+    public static int COLS = 24;
+    public static int BOMBS = 99;
+    public static Difficulty DIFFICULTY;
+    // Game width
+    public static int GAME_WIDTH = 960;
     public boolean gameOver;
 
     private HashMap<Integer, SweeperButton> buttonMap;
@@ -60,7 +62,11 @@ public class MineSweeper extends JPanel {
                     }
                 }
                 // If field == bomb then BombButton else EmptyButton
-                buttonMap.put(i * COLS + j, this.field[i][j] ? new BombSweeperButton(this, i, j, BUTTON_WIDTH, BUTTON_HEIGHT) : new EmptySweeperButton(this, i, j, BUTTON_WIDTH, BUTTON_HEIGHT, bombsAround));
+                buttonMap.put(
+                        i * COLS + j, this.field[i][j] ?
+                                new BombSweeperButton(this, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS) :
+                                new EmptySweeperButton(this, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS, bombsAround)
+                );
             }
         }
 
@@ -76,7 +82,12 @@ public class MineSweeper extends JPanel {
         if (revealFirstSelected) this.revealFirstZero();
     }
 
-    public static void start(boolean revealFirstSelected) {
+    public static void start(boolean revealFirstSelected, Difficulty difficulty) {
+        DIFFICULTY = difficulty;
+        BOMBS = difficulty.BOMBS;
+        COLS = difficulty.COLS;
+        ROWS = difficulty.ROWS;
+
         JFrame frame = new JFrame();
 
         JPanel container = new JPanel();
@@ -271,7 +282,7 @@ class TopPanel extends JPanel {
 
     public void startNewGame() {
         frameToDispose.dispose();
-        MineSweeper.start(revealFirstSelected);
+        MineSweeper.start(revealFirstSelected, MineSweeper.DIFFICULTY);
     }
 
     public boolean isGameOver() {

@@ -71,7 +71,7 @@ public class Update {
         } else {
             // Problem ??
             System.out.println("Are you in development? Otherwise report the following as a bug (https://github.com/SebastianThomas/minesweeper/issues/new):");
-            System.out.println("Latest version: " + latestRelease + "; Current version: " + UpdateConstants.currentVersion + "; Time: " + new Date().getTime());
+            System.out.println("Latest version: " + getLatestEARelease(res) + "; Current version: " + UpdateConstants.currentVersion + "; Time: " + new Date().getTime());
             return new Update(HAVE_NEWER_VERSION, true, null);
         }
     }
