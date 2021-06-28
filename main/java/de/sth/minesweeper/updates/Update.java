@@ -37,6 +37,10 @@ public class Update {
         System.out.println("Checking for updates...");
 
         JSONArray res = getResponse();
+        if (res == null) {
+            System.out.println("Something went wrong (do you have an internet connection?)");
+            return null;
+        }
 
         String latestRelease = getLatestRelease(res);
 
@@ -98,7 +102,7 @@ public class Update {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             return new JSONArray(response.body());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Did not work");
+            return null;
         }
     }
 

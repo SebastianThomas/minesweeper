@@ -37,13 +37,19 @@ public class UpdatePanel extends JPanel {
 
         new Thread(() -> {
             Update update = Update.getUpdateOptions();
-            this.resultFound(update);
+            if (update == null) this.showNoOptionGot();
+            else this.resultFound(update);
         }).start();
     }
 
     public void resultFound(Update update) {
         System.out.println(update.option);
         this.showOption(update);
+    }
+
+    private void showNoOptionGot() {
+        this.circle.setIcon(null);
+        this.circle.setText("Bitte Internetverbindung prüfen!");
     }
 
     private void showOption(Update update) {
