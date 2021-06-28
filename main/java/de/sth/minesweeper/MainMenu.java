@@ -1,13 +1,18 @@
 package de.sth.minesweeper;
 
 import de.sth.minesweeper.constants.ColorConstant;
+import de.sth.minesweeper.difficulties.Difficulties;
+import de.sth.minesweeper.difficulties.Difficulty;
+import de.sth.minesweeper.difficulties.DifficultyChangeListener;
+import de.sth.minesweeper.difficulties.DifficultyPanel;
 import de.sth.minesweeper.updates.UpdatePanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MainMenu extends JFrame {
+public class MainMenu extends JFrame implements DifficultyChangeListener {
     boolean revealFirstSelected = false;
+    private Difficulty difficulty;
 
     public MainMenu() {
         super("Minesweeper");
@@ -29,8 +34,7 @@ public class MainMenu extends JFrame {
         // Use the same font as in the title label
         start.setFont(new Font(title.getFont().getFontName(), Font.BOLD, 24));
         start.addActionListener(e -> {
-            this.dispose();
-            MineSweeper.start(revealFirstSelected);
+            this.startGame();
         });
         start.setBackground(ColorConstant.BG_Color);
         start.setForeground(ColorConstant.FG_Color);
@@ -54,6 +58,9 @@ public class MainMenu extends JFrame {
         revealFirstCheckBox.setFocusable(false);
         revealFirstCheckBox.setBackground(ColorConstant.BG_Color);
         revealFirstCheckBox.setForeground(ColorConstant.FG_Color);
+        // Difficulty
+        DifficultyPanel diffPanel = new DifficultyPanel(Difficulties.ADVANCED, this);
+
         // Updates
         UpdatePanel updatePanel = new UpdatePanel();
         // Options Panel
@@ -67,15 +74,27 @@ public class MainMenu extends JFrame {
         optionsPanel.add(optionsHeading);
         revealFirstCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
         optionsPanel.add(revealFirstCheckBox);
+        diffPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        optionsPanel.add(diffPanel);
         updatePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         optionsPanel.add(updatePanel);
 
         contentPanel.add(optionsPanel);
 
         this.setContentPane(contentPanel);
-        this.setSize(500, 300);
+        this.setSize(500, 400);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setVisible(true);
+    }
+
+    private void startGame() {
+        this.dispose();
+        MineSweeper.start(revealFirstSelected, this.difficulty);
+    }
+
+    @Override
+    public void difficultyChanged(Difficulties newDifficulty) {
+        this.difficulty = Difficulties.getDifficulty(newDifficulty);
     }
 }
