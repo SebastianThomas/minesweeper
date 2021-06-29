@@ -1,3 +1,7 @@
+package de.sth.minesweeper;
+
+import de.sth.minesweeper.constants.ColorConstant;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -13,7 +17,7 @@ public abstract class SweeperButton extends JButton {
     private int width;
     private int height;
 
-    // PARAM sweeper = MineSweeper to tell the main game that a bomb has been fired
+    // PARAM sweeper = de.sth.minesweeper.MineSweeper to tell the main game that a bomb has been fired
     public SweeperButton(MineSweeper sweeper, int x, int y, int width, int height) {
         this.revealed = false;
         this.rightClicked = false;
@@ -99,7 +103,7 @@ class EmptySweeperButton extends SweeperButton {
 
     @Override
     public void reveal() {
-        this.setForeground(Color.WHITE);
+        this.setForeground(ColorConstant.FG_Color);
         this.setText(this.bombsAround != 0 ? String.valueOf(this.bombsAround) : "");
     }
 
