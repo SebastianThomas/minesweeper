@@ -1,13 +1,20 @@
-package de.sth.minesweeper;
+package de.sth.minesweeper.buttons;
 
-import de.sth.minesweeper.constants.ColorConstant;
+import de.sth.minesweeper.BombException;
+import de.sth.minesweeper.MineSweeper;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
 
 public abstract class SweeperButton extends JButton {
+    // "https://www.freepik.com"
+    public static String BOMB_FILE_PATH = "bomb.png";
+    // Vectors Market
+    public static String FLAG_FILE_PATH = "flag_icon.png";
+
     protected boolean revealed;
     protected boolean rightClicked;
 
@@ -48,41 +55,67 @@ public abstract class SweeperButton extends JButton {
             }
         } catch (BombException exception) {
             game.bombFired(this.x, this.y);
-            this.setForeground(Color.RED);
-            this.setText("B");
+            this.showIcon(Color.RED, BOMB_FILE_PATH);
         }
     }
 
     public void emitReveal(boolean gameOver) {
-        if (gameOver) {
+        if (gameOver && !this.revealed) {
             try {
                 this.reveal(true);
             } catch (BombException exception) {
-                this.setForeground(Color.ORANGE);
-                this.setText("B");
+                this.showIcon(Color.ORANGE, BOMB_FILE_PATH);
             }
         }
     }
 
+    private void showIcon(Color c, String filePath) {
+        this.setForeground(c);
+
+        this.setText("");
+        // Show an icon:
+        try {
+            URL u = this.getClass().getResource(filePath);
+            if (u == null) throw new NullPointerException("Image not found");
+            ImageIcon icon = new ImageIcon(u);
+            this.setIcon(icon);
+        } catch (NullPointerException e) {
+            this.setText(filePath.equals(FLAG_FILE_PATH) ? "B" : "F");
+        }
+    }
+
+    private void removeIcon() {
+        this.setIcon(null);
+    }
+
     public void rightClick() {
+        if (revealed) return;
         if (!rightClicked) {
             if (!(this.game.getFlagsLeft() > 0)) return;
             this.setForeground(Color.CYAN);
-            this.setText("F");
+
+            // Do not set text
+            // this.setText("F");
+            // Instead: icon
+            this.showIcon(Color.CYAN, FLAG_FILE_PATH);
+
             this.rightClicked = true;
 
             this.game.newRightClick(this);
         } else {
-            this.setText("");
+            this.removeIcon();
             this.rightClicked = false;
             this.game.removeRightClick(this);
         }
     }
 
     public void rightClick(boolean gameOver) {
-        if (gameOver) {
-            this.setForeground(Color.CYAN);
-            this.setText("F");
+        if (gameOver && !this.revealed) {
+            // Do not set text
+            // this.setText("F");
+            // Instead: icon
+            this.setText("");
+            this.showIcon(Color.CYAN, FLAG_FILE_PATH);
         }
     }
 
@@ -91,57 +124,6 @@ public abstract class SweeperButton extends JButton {
     public abstract void reveal(boolean gameOver) throws BombException;
 
     public abstract int getBombsAround() throws UnsupportedOperationException;
-}
-
-class EmptySweeperButton extends SweeperButton {
-    private int bombsAround;
-
-    public EmptySweeperButton(MineSweeper sweeper, int x, int y, int width, int height, int bombsAround) {
-        super(sweeper, x, y, width, height);
-        this.bombsAround = bombsAround;
-    }
-
-    @Override
-    public void reveal() {
-        this.setForeground(ColorConstant.FG_Color);
-        this.setText(this.bombsAround != 0 ? String.valueOf(this.bombsAround) : "");
-    }
-
-    @Override
-    public void reveal(boolean gameOver) {
-        int rgb = this.bombsAround == 0 ? 180 : 255;
-        if (this.revealed) rgb = 80;
-        this.setForeground(new Color(rgb, rgb, rgb));
-
-        if (gameOver) this.setText(String.valueOf(this.bombsAround));
-        else this.setText(this.bombsAround != 0 ? String.valueOf(this.bombsAround) : "");
-    }
-
-    @Override
-    public int getBombsAround() {
-        return this.bombsAround;
-    }
-}
-
-class BombSweeperButton extends SweeperButton {
-    public BombSweeperButton(MineSweeper sweeper, int x, int y, int width, int height) {
-        super(sweeper, x, y, width, height);
-    }
-
-    @Override
-    public void reveal() throws BombException {
-        throw new BombException();
-    }
-
-    @Override
-    public void reveal(boolean b) throws BombException {
-        throw new BombException();
-    }
-
-    @Override
-    public int getBombsAround() throws UnsupportedOperationException {
-        throw new UnsupportedOperationException();
-    }
 }
 
 class SweeperButtonMouseAdapter implements MouseListener {

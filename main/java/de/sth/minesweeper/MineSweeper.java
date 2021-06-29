@@ -1,5 +1,8 @@
 package de.sth.minesweeper;
 
+import de.sth.minesweeper.buttons.BombSweeperButton;
+import de.sth.minesweeper.buttons.EmptySweeperButton;
+import de.sth.minesweeper.buttons.SweeperButton;
 import de.sth.minesweeper.constants.ColorConstant;
 import de.sth.minesweeper.difficulties.Difficulty;
 import de.sth.minesweeper.timer.TimerPanel;
@@ -125,7 +128,7 @@ public class MineSweeper extends JPanel {
 
             Runnable r = () -> {
                 try {
-                    Thread.sleep(650);
+                    Thread.sleep(500);
                 } catch (InterruptedException ignored) {
                 }
                 this.buttonMap.get(x * COLS + y).emitReveal();

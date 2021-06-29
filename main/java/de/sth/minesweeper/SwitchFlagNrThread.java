@@ -1,5 +1,7 @@
 package de.sth.minesweeper;
 
+import de.sth.minesweeper.buttons.SweeperButton;
+
 import java.util.Set;
 
 public class SwitchFlagNrThread implements Runnable {

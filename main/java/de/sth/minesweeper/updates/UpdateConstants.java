@@ -1,7 +1,7 @@
 package de.sth.minesweeper.updates;
 
 public abstract class UpdateConstants {
-    public static final String currentVersion = "v4.5";
+    public static final String currentVersion = "v4.6";
 
     enum UpdateOptions {
         /**
