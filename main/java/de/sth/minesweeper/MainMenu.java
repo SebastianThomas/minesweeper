@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainMenu extends JFrame implements DifficultyChangeListener {
-    boolean revealFirstSelected = false;
+    boolean revealFirstSelected = true;
     private Difficulty difficulty;
 
     public MainMenu() {
@@ -56,6 +56,7 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
         JCheckBox revealFirstCheckBox = new JCheckBox("Eine zufällige 0 bereits aufdecken?", revealFirstSelected);
         revealFirstCheckBox.addActionListener(e -> revealFirstSelected = !revealFirstSelected);
         revealFirstCheckBox.setFocusable(false);
+        revealFirstCheckBox.setSelected(true);
         revealFirstCheckBox.setBackground(ColorConstant.BG_Color);
         revealFirstCheckBox.setForeground(ColorConstant.FG_Color);
         // Difficulty

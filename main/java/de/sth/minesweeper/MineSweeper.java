@@ -2,6 +2,7 @@ package de.sth.minesweeper;
 
 import de.sth.minesweeper.constants.ColorConstant;
 import de.sth.minesweeper.difficulties.Difficulty;
+import de.sth.minesweeper.timer.TimerPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -225,11 +226,14 @@ public class MineSweeper extends JPanel {
 
 class TopPanel extends JPanel {
     private final boolean revealFirstSelected;
-    private JFrame frameToDispose;
-    private JLabel label;
-    private JButton startAgainButton;
+
+    private final JFrame frameToDispose;
+    private final JButton startAgainButton;
+    private final JLabel label;
+    private final JLabel flagsLeft;
+    private final TimerPanel timerPanel;
+
     private boolean gameOver;
-    private JLabel flagsLeft;
 
     public TopPanel(JFrame frameToDispose, boolean revealFirstSelected) {
         this.gameOver = false;
@@ -251,6 +255,10 @@ class TopPanel extends JPanel {
         this.flagsLeft.setForeground(Color.CYAN);
         this.label.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 50));
         this.add(this.flagsLeft);
+
+        this.timerPanel = new TimerPanel();
+        this.timerPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 50));
+        this.add(this.timerPanel);
 
         this.startAgainButton = new JButton("Erneut probieren?");
         this.startAgainButton.addActionListener(e -> {
