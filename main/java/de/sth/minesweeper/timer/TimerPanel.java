@@ -21,11 +21,11 @@ public class TimerPanel extends JPanel {
         this.label = new JLabel("Zeit: ");
         this.label.setForeground(ColorConstant.FG_Color);
         this.label.setBackground(ColorConstant.BG_Color);
-        this.label.setFont(new Font(this.label.getFont().getFontName(), Font.ITALIC, 22));
+        this.label.setFont(new Font(this.label.getFont().getFontName(), Font.ITALIC, 16));
         this.timer = new JLabel("00:00");
         this.timer.setForeground(ColorConstant.FG_Color);
         this.timer.setBackground(ColorConstant.BG_Color);
-        this.timer.setFont(new Font(this.timer.getFont().getFontName(), Font.ITALIC, 22));
+        this.timer.setFont(new Font(this.timer.getFont().getFontName(), Font.ITALIC, 16));
 
         this.add(this.label);
         this.add(this.timer);

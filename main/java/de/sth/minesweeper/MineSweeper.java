@@ -229,6 +229,7 @@ class TopPanel extends JPanel {
 
     private final JFrame frameToDispose;
     private final JButton startAgainButton;
+    private final JButton backToMainMenuButton;
     private final JLabel label;
     private final JLabel flagsLeft;
     private final TimerPanel timerPanel;
@@ -245,13 +246,13 @@ class TopPanel extends JPanel {
         this.frameToDispose = frameToDispose;
 
         this.label = new JLabel("Minesweeper");
-        this.label.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 24));
+        this.label.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 20));
         this.label.setForeground(ColorConstant.FG_LIGHTER_COLOR);
         this.label.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 25));
         this.add(this.label);
 
         this.flagsLeft = new JLabel();
-        this.flagsLeft.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 20));
+        this.flagsLeft.setFont(new Font(this.getFont().getFontName(), Font.BOLD, 16));
         this.flagsLeft.setForeground(Color.CYAN);
         this.label.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 50));
         this.add(this.flagsLeft);
@@ -263,6 +264,11 @@ class TopPanel extends JPanel {
         this.startAgainButton = new JButton("Erneut probieren?");
         this.startAgainButton.addActionListener(e -> {
             this.startNewGame();
+        });
+
+        this.backToMainMenuButton = new JButton("Hauptmenü");
+        this.backToMainMenuButton.addActionListener(e -> {
+            this.returnToMainMenu();
         });
     }
 
@@ -281,7 +287,11 @@ class TopPanel extends JPanel {
             label.setText("Sie haben eine Bombe getroffen!");
         }
 
-        this.add(this.startAgainButton);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(ColorConstant.BG_Color);
+        buttonPanel.add(this.backToMainMenuButton);
+        buttonPanel.add(this.startAgainButton);
+        this.add(buttonPanel);
     }
 
     public JButton getStartAgainButton() {
@@ -291,6 +301,11 @@ class TopPanel extends JPanel {
     public void startNewGame() {
         frameToDispose.dispose();
         MineSweeper.start(revealFirstSelected, MineSweeper.DIFFICULTY);
+    }
+
+    public void returnToMainMenu() {
+        frameToDispose.dispose();
+        new MainMenu();
     }
 
     public boolean isGameOver() {
