@@ -20,7 +20,7 @@ public class MineSweeper extends JPanel {
     public static int BOMBS = 99;
     public static Difficulty DIFFICULTY;
     // Game width
-    public static int GAME_WIDTH = 960;
+    public static int GAME_WIDTH = 900;
     public boolean gameOver;
 
     private HashMap<Integer, SweeperButton> buttonMap;
