@@ -5,6 +5,7 @@ import de.sth.minesweeper.buttons.EmptySweeperButton;
 import de.sth.minesweeper.buttons.SweeperButton;
 import de.sth.minesweeper.constants.ColorConstant;
 import de.sth.minesweeper.difficulties.Difficulty;
+import de.sth.minesweeper.logging.Logger;
 import de.sth.minesweeper.timer.TimerPanel;
 
 import javax.swing.*;
@@ -127,11 +128,16 @@ public class MineSweeper extends JPanel {
             if (this.buttonMap.get(x * COLS + y).getBombsAround() != 0) throw new Exception();
 
             Runnable r = () -> {
+                Logger.getInstance().log("REVEAL FIRST ZERO: P(" + x + "|" + y + ")");
+                Logger.getInstance().separatorLine("FIRST ZERO REVEAL");
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ignored) {
                 }
                 this.buttonMap.get(x * COLS + y).emitReveal();
+
+                // When all surrounding fields are revealed, log separator line from the ending
+                Logger.getInstance().separatorLine("FIRST ZERO REVEAL");
             };
             Thread t = new Thread(r);
             t.start();
@@ -203,6 +209,7 @@ public class MineSweeper extends JPanel {
     }
 
     private void revealAllFields() {
+        Logger.getInstance().separatorLine("ALL FIELDS");
         for (int i = 0; i < COLS; i++) {
             for (int j = 0; j < ROWS; j++) {
                 int buttonIndex = (i) * COLS + (j);
@@ -211,6 +218,7 @@ public class MineSweeper extends JPanel {
                 button.emitReveal(true);
             }
         }
+        Logger.getInstance().separatorLine("ALL FIELDS");
 
         SwitchFlagNrThread runnable = new SwitchFlagNrThread(this.rightClicked);
         Thread t = new Thread(runnable);

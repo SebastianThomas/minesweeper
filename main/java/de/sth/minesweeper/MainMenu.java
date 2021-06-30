@@ -5,6 +5,8 @@ import de.sth.minesweeper.difficulties.Difficulties;
 import de.sth.minesweeper.difficulties.Difficulty;
 import de.sth.minesweeper.difficulties.DifficultyChangeListener;
 import de.sth.minesweeper.difficulties.DifficultyPanel;
+import de.sth.minesweeper.fs.FileAccess;
+import de.sth.minesweeper.logging.Logger;
 import de.sth.minesweeper.updates.UpdatePanel;
 
 import javax.swing.*;
@@ -16,6 +18,10 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
 
     public MainMenu() {
         super("Minesweeper");
+
+        FileAccess.init();
+
+        Logger.getInstance().log("Creating Main Menu");
 
         JPanel contentPanel = new JPanel();
         BoxLayout l = new BoxLayout(contentPanel, BoxLayout.Y_AXIS);
@@ -34,6 +40,8 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
         // Use the same font as in the title label
         start.setFont(new Font(title.getFont().getFontName(), Font.BOLD, 24));
         start.addActionListener(e -> {
+            Logger.getInstance().log("Starting game; options: \n" +
+                    "\t\t\tReveal first zero: " + this.revealFirstSelected + "; Bombs: " + this.difficulty.BOMBS);
             this.startGame();
         });
         start.setBackground(ColorConstant.BG_Color);
@@ -96,6 +104,7 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
 
     @Override
     public void difficultyChanged(Difficulties newDifficulty) {
+        Logger.getInstance().log("\t\t\tCurrently selected difficulty: " + newDifficulty.toString());
         this.difficulty = Difficulties.getDifficulty(newDifficulty);
     }
 }

@@ -2,6 +2,7 @@ package de.sth.minesweeper.buttons;
 
 import de.sth.minesweeper.BombException;
 import de.sth.minesweeper.MineSweeper;
+import de.sth.minesweeper.logging.Logger;
 
 public class BombSweeperButton extends SweeperButton {
     public BombSweeperButton(MineSweeper sweeper, int x, int y, int width, int height) {
@@ -10,11 +11,13 @@ public class BombSweeperButton extends SweeperButton {
 
     @Override
     public void reveal() throws BombException {
+        Logger.getInstance().log("Reveal: B(" + this.x + "|" + this.y + ") --> BOMB");
         throw new BombException();
     }
 
     @Override
     public void reveal(boolean b) throws BombException {
+        Logger.getInstance().log("Reveal: B(" + this.x + "|" + this.y + ") --> BOMB");
         throw new BombException();
     }
 

@@ -1,5 +1,6 @@
 package de.sth.minesweeper.updates;
 
+import de.sth.minesweeper.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -26,23 +27,28 @@ public class Update {
         this.version = version;
         URI tempURI;
         try {
-            tempURI = new URI("https://github.com/SebastianThomas/minesweeper/releases/download/" + version + "/minesweeper.jar");
-        } catch (URISyntaxException ignored) {
+            if (this.version == null) throw new NullPointerException();
+            tempURI = new URI("https://github.com/SebastianThomas/minesweeper/releases/" + version);
+        } catch (NullPointerException | URISyntaxException ignored) {
             tempURI = null;
         }
         this.uri = tempURI;
     }
 
     public static Update getUpdateOptions() {
-        System.out.println("Checking for updates...");
+        Logger.getInstance().log("Checking for updates...");
 
         JSONArray res = getResponse();
         if (res == null) {
             System.out.println("Something went wrong (do you have an internet connection?)");
+            Logger.getInstance().log("No internet connection found?");
             return null;
         }
 
         String latestRelease = getLatestRelease(res);
+
+        Logger.getInstance().log("Current release: " + UpdateConstants.currentVersion);
+        Logger.getInstance().log("Found latest release: " + latestRelease + "; latest EA release: " + getLatestEARelease(res));
 
         if (Objects.equals(getLatestEARelease(res), UpdateConstants.currentVersion)) {
             System.out.println("Have latest release (might be an Early Access version)");

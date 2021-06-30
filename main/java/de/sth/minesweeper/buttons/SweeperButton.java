@@ -18,11 +18,11 @@ public abstract class SweeperButton extends JButton {
     protected boolean revealed;
     protected boolean rightClicked;
 
-    private MineSweeper game;
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    protected MineSweeper game;
+    protected int x;
+    protected int y;
+    protected int width;
+    protected int height;
 
     // PARAM sweeper = de.sth.minesweeper.MineSweeper to tell the main game that a bomb has been fired
     public SweeperButton(MineSweeper sweeper, int x, int y, int width, int height) {
