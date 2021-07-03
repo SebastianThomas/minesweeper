@@ -3,14 +3,15 @@ package de.sth.minesweeper.buttons;
 import de.sth.minesweeper.MineSweeper;
 import de.sth.minesweeper.constants.ColorConstant;
 import de.sth.minesweeper.logging.Logger;
+import de.sth.minesweeper.stats.GameStatistic;
 
 import java.awt.*;
 
 public class EmptySweeperButton extends SweeperButton {
     private int bombsAround;
 
-    public EmptySweeperButton(MineSweeper sweeper, int x, int y, int width, int height, int bombsAround) {
-        super(sweeper, x, y, width, height);
+    public EmptySweeperButton(MineSweeper sweeper, GameStatistic stats, int x, int y, int width, int height, int bombsAround) {
+        super(sweeper, stats, x, y, width, height);
         this.bombsAround = bombsAround;
     }
 

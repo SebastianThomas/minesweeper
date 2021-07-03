@@ -7,6 +7,7 @@ import de.sth.minesweeper.difficulties.DifficultyChangeListener;
 import de.sth.minesweeper.difficulties.DifficultyPanel;
 import de.sth.minesweeper.fs.FileAccess;
 import de.sth.minesweeper.logging.Logger;
+import de.sth.minesweeper.stats.StatisticPanel;
 import de.sth.minesweeper.updates.UpdatePanel;
 
 import javax.swing.*;
@@ -72,6 +73,8 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
 
         // Updates
         UpdatePanel updatePanel = new UpdatePanel();
+        // Statics
+        StatisticPanel statsPanel = new StatisticPanel();
         // Options Panel
         JPanel optionsPanel = new JPanel();
         optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -87,11 +90,13 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
         optionsPanel.add(diffPanel);
         updatePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         optionsPanel.add(updatePanel);
+        statsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        optionsPanel.add(statsPanel);
 
         contentPanel.add(optionsPanel);
 
         this.setContentPane(contentPanel);
-        this.setSize(500, 400);
+        this.setSize(500, 500);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setVisible(true);

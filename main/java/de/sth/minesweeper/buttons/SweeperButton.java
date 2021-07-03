@@ -2,6 +2,7 @@ package de.sth.minesweeper.buttons;
 
 import de.sth.minesweeper.BombException;
 import de.sth.minesweeper.MineSweeper;
+import de.sth.minesweeper.stats.GameStatistic;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,8 @@ public abstract class SweeperButton extends JButton {
     protected boolean revealed;
     protected boolean rightClicked;
 
+    protected GameStatistic stats;
+
     protected MineSweeper game;
     protected int x;
     protected int y;
@@ -25,11 +28,13 @@ public abstract class SweeperButton extends JButton {
     protected int height;
 
     // PARAM sweeper = de.sth.minesweeper.MineSweeper to tell the main game that a bomb has been fired
-    public SweeperButton(MineSweeper sweeper, int x, int y, int width, int height) {
+    public SweeperButton(MineSweeper sweeper, GameStatistic stats, int x, int y, int width, int height) {
         this.revealed = false;
         this.rightClicked = false;
 
+
         this.game = sweeper;
+        this.stats = stats;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -40,6 +45,7 @@ public abstract class SweeperButton extends JButton {
         this.setFocusable(false);
 
         this.addActionListener(event -> {
+            this.stats.incrementMoves();
             this.emitReveal();
         });
         this.addMouseListener(new SweeperButtonMouseAdapter(this));

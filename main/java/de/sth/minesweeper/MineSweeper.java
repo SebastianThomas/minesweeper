@@ -6,6 +6,7 @@ import de.sth.minesweeper.buttons.SweeperButton;
 import de.sth.minesweeper.constants.ColorConstant;
 import de.sth.minesweeper.difficulties.Difficulty;
 import de.sth.minesweeper.logging.Logger;
+import de.sth.minesweeper.stats.GameStatistic;
 import de.sth.minesweeper.timer.TimerPanel;
 
 import javax.swing.*;
@@ -26,19 +27,25 @@ public class MineSweeper extends JPanel {
     public static Difficulty DIFFICULTY;
     // Game width
     public static int GAME_WIDTH = 900;
+    // Game stats
+    private final GameStatistic statistic;
+    // Game over = false (at the beginning)
     public boolean gameOver;
-
     private HashMap<Integer, SweeperButton> buttonMap;
-    private boolean[][] field;
-    private int revealed;
-    private int nrOfRevealedFlags;
     private Set<SweeperButton> rightClicked;
 
     private TopPanel topPanel;
+    private BottomPanel bottomPanel;
 
-    public MineSweeper(TopPanel topPanel, boolean revealFirstSelected) {
+    private boolean[][] field;
+    private int revealed;
+    private int nrOfRevealedFlags;
+
+    public MineSweeper(TopPanel topPanel, BottomPanel bottomPanel, boolean revealFirstSelected) {
         this.revealed = 0;
         this.nrOfRevealedFlags = 0;
+
+        this.statistic = new GameStatistic(revealFirstSelected, System.currentTimeMillis());
 
         this.topPanel = topPanel;
         this.topPanel.setFlagsLeft(BOMBS);
@@ -69,8 +76,8 @@ public class MineSweeper extends JPanel {
                 // If field == bomb then BombButton else EmptyButton
                 buttonMap.put(
                         i * COLS + j, this.field[i][j] ?
-                                new BombSweeperButton(this, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS) :
-                                new EmptySweeperButton(this, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS, bombsAround)
+                                new BombSweeperButton(this, statistic, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS) :
+                                new EmptySweeperButton(this, statistic, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS, bombsAround)
                 );
             }
         }
@@ -81,6 +88,8 @@ public class MineSweeper extends JPanel {
         for (Map.Entry<Integer, SweeperButton> e : this.buttonMap.entrySet()) {
             this.add(e.getValue());
         }
+
+        this.bottomPanel = bottomPanel;
 
         this.rightClicked = new HashSet<>();
 
@@ -97,15 +106,17 @@ public class MineSweeper extends JPanel {
 
         JPanel container = new JPanel();
 
-        // Top Panel
+        // Panels
         TopPanel topPanel = new TopPanel(frame, revealFirstSelected);
+        BottomPanel bottomPanel = new BottomPanel();
 
         // Init game panel
-        MineSweeper mineSweeperGame = new MineSweeper(topPanel, revealFirstSelected);
+        MineSweeper mineSweeperGame = new MineSweeper(topPanel, bottomPanel, revealFirstSelected);
 
         container.setLayout(new BorderLayout());
         container.add(topPanel, BorderLayout.NORTH);
         container.add(mineSweeperGame, BorderLayout.CENTER);
+        container.add(bottomPanel, BorderLayout.SOUTH);
 
         // Init frame
         frame.getRootPane().setDefaultButton(topPanel.getStartAgainButton());
@@ -157,9 +168,14 @@ public class MineSweeper extends JPanel {
 
     public void newReveal(SweeperButton button, int x, int y) {
         this.revealed++;
+        this.statistic.incrementRevealedFields();
+
         if (ROWS * COLS - (BOMBS + this.revealed) <= 0) {
             this.revealAllFields();
             this.topPanel.gameOver(true);
+
+            this.statistic.setWon(true);
+            this.finishStats();
         } else {
             this.revealSurroundingFields(button, x, y);
         }
@@ -182,9 +198,14 @@ public class MineSweeper extends JPanel {
     }
 
     public void bombFired(int x, int y) {
+        // The game was lost
         this.gameOver = true;
         this.revealAllFields();
         this.setGameLostLabel();
+
+        this.statistic.setWon(false);
+
+        this.finishStats();
     }
 
     private void revealSurroundingFields(SweeperButton pressedButton, int x, int y) {
@@ -232,6 +253,16 @@ public class MineSweeper extends JPanel {
 
     public void enterPressed() {
         if (this.topPanel.isGameOver()) this.topPanel.startNewGame();
+    }
+
+    private void finishStats() {
+        this.statistic.setEndingMillis(System.currentTimeMillis());
+
+        System.out.println("Finish stats");
+        System.out.println(this.statistic.toJSONObject().toString(4));
+
+        Logger.getInstance().log("Save statistics: \n" + this.statistic.toJSONObject().toString(4));
+        this.statistic.save();
     }
 }
 
@@ -321,6 +352,23 @@ class TopPanel extends JPanel {
 
     public boolean isGameOver() {
         return gameOver;
+    }
+}
+
+class BottomPanel extends JPanel {
+    private JLabel error;
+
+    public BottomPanel() {
+        this.setBackground(ColorConstant.BG_Color);
+        this.setForeground(ColorConstant.FG_LIGHTER_COLOR);
+
+        this.error = new JLabel();
+        this.error.setForeground(ColorConstant.ERROR_COLOR);
+        this.error.setBackground(ColorConstant.BG_Color);
+    }
+
+    public void setErrorText(String newText) {
+        this.error.setText(newText);
     }
 }
 
