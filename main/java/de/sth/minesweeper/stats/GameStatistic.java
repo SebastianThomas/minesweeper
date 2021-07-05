@@ -5,8 +5,8 @@ import org.json.JSONObject;
 
 public class GameStatistic {
     private boolean won;
-    private int moves;
-    private int revealedFields;
+    private long moves;
+    private long revealedFields;
     private boolean revealFirstSelected;
     private int points;
     private long beginningMillis;
@@ -14,15 +14,15 @@ public class GameStatistic {
 
     public GameStatistic(boolean revealFirstSelected, long beginningMillis) {
         this.won = false;
-        this.moves = 0;
-        this.revealedFields = 0;
+        this.moves = 0L;
+        this.revealedFields = 0L;
         this.revealFirstSelected = revealFirstSelected;
         this.points = -1;
         this.beginningMillis = beginningMillis;
-        this.endingMillis = -1;
+        this.endingMillis = -1L;
     }
 
-    public GameStatistic(boolean won, boolean revealFirstSelected, int revealedFields, int moves, int points, long beginningMillis, long endingMillis) {
+    public GameStatistic(boolean won, boolean revealFirstSelected, long revealedFields, long moves, int points, long beginningMillis, long endingMillis) {
         this.won = won;
         this.moves = moves;
         this.revealFirstSelected = revealFirstSelected;
@@ -33,7 +33,7 @@ public class GameStatistic {
     }
 
     public static GameStatistic of(JSONObject o) {
-        return new GameStatistic(o.getBoolean("won"), o.getBoolean("revealFirstSelected"), o.getInt("revealedFields"), o.getInt("moves"), o.getInt("points"), o.getLong("beginningMillis"), o.getLong("endingMillis"));
+        return new GameStatistic(o.getBoolean("won"), o.getBoolean("revealFirstSelected"), o.getLong("revealedFields"), o.getLong("moves"), o.getInt("points"), o.getLong("beginningMillis"), o.getLong("endingMillis"));
     }
 
     public static GameStatistic[] ofArray(JSONArray a) {
@@ -72,7 +72,7 @@ public class GameStatistic {
         this.moves += 1;
     }
 
-    public int getMoves() {
+    public long getMoves() {
         return moves;
     }
 
@@ -80,7 +80,7 @@ public class GameStatistic {
         this.moves = moves;
     }
 
-    public int getRevealedFields() {
+    public long getRevealedFields() {
         return revealedFields;
     }
 

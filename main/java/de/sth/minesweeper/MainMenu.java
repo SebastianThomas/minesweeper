@@ -7,6 +7,8 @@ import de.sth.minesweeper.difficulties.DifficultyChangeListener;
 import de.sth.minesweeper.difficulties.DifficultyPanel;
 import de.sth.minesweeper.fs.FileAccess;
 import de.sth.minesweeper.logging.Logger;
+import de.sth.minesweeper.settings.Settings;
+import de.sth.minesweeper.settings.SettingsIO;
 import de.sth.minesweeper.stats.StatisticPanel;
 import de.sth.minesweeper.updates.UpdatePanel;
 
@@ -14,15 +16,18 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MainMenu extends JFrame implements DifficultyChangeListener {
-    boolean revealFirstSelected = true;
+    boolean revealFirstSelected;
     private Difficulty difficulty;
+    private Difficulties selectedDifficulty;
 
     public MainMenu() {
         super("Minesweeper");
 
         FileAccess.init();
-
         Logger.getInstance().log("Creating Main Menu");
+
+        Settings settings = SettingsIO.readSettings();
+        this.revealFirstSelected = settings.isRevealFirstSelected();
 
         JPanel contentPanel = new JPanel();
         BoxLayout l = new BoxLayout(contentPanel, BoxLayout.Y_AXIS);
@@ -62,14 +67,14 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
         optionsHeading.setBackground(ColorConstant.BG_Color);
         optionsHeading.setForeground(ColorConstant.FG_Color);
         // Checkbox
-        JCheckBox revealFirstCheckBox = new JCheckBox("Eine zufällige 0 bereits aufdecken?", revealFirstSelected);
-        revealFirstCheckBox.addActionListener(e -> revealFirstSelected = !revealFirstSelected);
+        System.out.println(this.revealFirstSelected);
+        JCheckBox revealFirstCheckBox = new JCheckBox("Eine zufällige 0 bereits aufdecken?", this.revealFirstSelected);
+        revealFirstCheckBox.addActionListener(e -> this.revealFirstSelected = !this.revealFirstSelected);
         revealFirstCheckBox.setFocusable(false);
-        revealFirstCheckBox.setSelected(true);
         revealFirstCheckBox.setBackground(ColorConstant.BG_Color);
         revealFirstCheckBox.setForeground(ColorConstant.FG_Color);
         // Difficulty
-        DifficultyPanel diffPanel = new DifficultyPanel(Difficulties.ADVANCED, this);
+        DifficultyPanel diffPanel = new DifficultyPanel(settings.getSelectedDifficulty(), this);
 
         // Updates
         UpdatePanel updatePanel = new UpdatePanel();
@@ -103,6 +108,7 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
     }
 
     private void startGame() {
+        SettingsIO.writeSettings(this.revealFirstSelected, this.selectedDifficulty);
         this.dispose();
         MineSweeper.start(revealFirstSelected, this.difficulty);
     }
@@ -110,6 +116,7 @@ public class MainMenu extends JFrame implements DifficultyChangeListener {
     @Override
     public void difficultyChanged(Difficulties newDifficulty) {
         Logger.getInstance().log("\t\t\tCurrently selected difficulty: " + newDifficulty.toString());
+        this.selectedDifficulty = newDifficulty;
         this.difficulty = Difficulties.getDifficulty(newDifficulty);
     }
 }

@@ -11,22 +11,26 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 public class JSONWriter {
-    public static void writeToFile(Path file, JSONArray a) {
+    public static void writeToFile(Path file, String s) {
         try {
-            if (!Files.exists(file.getParent())) Files.createDirectories(file.getParent());
-            if (!Files.exists(file)) Files.createFile(file);
-            Files.writeString(file, a.toString(4), StandardOpenOption.WRITE);
+            createDirAndFileIfNotExists(file);
+            Files.writeString(file, s, StandardOpenOption.WRITE);
         } catch (IOException e) {
             Logger.getInstance().log("COULD NOT WRITE JSON TO FILE: \n" + e);
         }
     }
 
+    public static void writeToFile(Path file, JSONArray a) {
+        writeToFile(file, a.toString(4));
+    }
+
     public static void writeToFile(Path file, JSONObject o) {
-        try {
-            Files.writeString(file, o.toString(4), StandardOpenOption.WRITE);
-        } catch (IOException e) {
-            Logger.getInstance().log("COULD NOT WRITE JSON TO FILE: \n" + e);
-        }
+        writeToFile(file, o.toString(4));
+    }
+
+    public static void createDirAndFileIfNotExists(Path file) throws IOException {
+        if (!Files.exists(file.getParent())) Files.createDirectories(file.getParent());
+        if (!Files.exists(file)) Files.createFile(file);
     }
 
     public static JSONObject readObjectFromFile(Path file) throws JSONIOException {

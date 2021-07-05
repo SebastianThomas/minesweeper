@@ -9,6 +9,7 @@ public class TimerPanel extends JPanel {
     private JLabel label;
     private JLabel timer;
     private long startTime;
+    private Timer t;
 
     public TimerPanel() {
         super();
@@ -30,14 +31,14 @@ public class TimerPanel extends JPanel {
         this.add(this.label);
         this.add(this.timer);
 
-        Timer t = new Timer(95, e -> {
+        this.t = new Timer(95, e -> {
             this.timer.setText(timerToString(System.currentTimeMillis()));
         });
         t.setRepeats(true);
         t.start();
     }
 
-    public String timerToString(long time) {
+    public static String timerToString(long time, long startTime) {
         long ms = time - startTime;
         long totalSeconds = (ms - (ms % 1000)) / 1000;
         long seconds = totalSeconds % 60;
@@ -46,7 +47,15 @@ public class TimerPanel extends JPanel {
         return getTrailingZero(minutes) + ":" + getTrailingZero(seconds);
     }
 
-    public String getTrailingZero(long nr) {
+    public static String getTrailingZero(long nr) {
         return nr < 10 ? "0" + nr : String.valueOf(nr);
+    }
+
+    public String timerToString(long time) {
+        return timerToString(time, this.startTime);
+    }
+
+    public void stopTimer() {
+        t.stop();
     }
 }

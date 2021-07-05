@@ -17,7 +17,6 @@ public class DifficultyPanel extends JPanel {
 
     private ButtonGroup difficultyGroup;
 
-
     public DifficultyPanel(Difficulties difficulty, DifficultyChangeListener listener) {
         super();
 
@@ -57,7 +56,14 @@ public class DifficultyPanel extends JPanel {
 
         this.add(this.headingLabel);
         this.add(optionsPanel);
-        this.options[2].setSelected(true);
+
+        Difficulties[] difficulties = Difficulties.values();
+        for (int i = 0; i < difficulties.length; i++) {
+            if (difficulties[i] == this.difficulty) {
+                this.options[i].setSelected(true);
+                break;
+            }
+        }
     }
 
     private void setDifficulty(String newDifficulty) {

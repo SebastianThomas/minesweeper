@@ -82,7 +82,7 @@ public class MineSweeper extends JPanel {
             }
         }
 
-        this.setSize(500, 500);
+        this.setSize(500, 550);
         this.setLayout(new GridLayout(0, COLS));
 
         for (Map.Entry<Integer, SweeperButton> e : this.buttonMap.entrySet()) {
@@ -320,6 +320,7 @@ class TopPanel extends JPanel {
 
     public void gameOver(boolean won) {
         this.gameOver = true;
+        this.timerPanel.stopTimer();
 
         if (won) {
             label.setForeground(new Color(0, 255, 0));

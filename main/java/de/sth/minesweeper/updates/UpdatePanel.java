@@ -3,8 +3,8 @@ package de.sth.minesweeper.updates;
 import de.sth.minesweeper.constants.ColorConstant;
 
 import javax.swing.*;
+import javax.swing.plaf.ComponentUI;
 import java.awt.*;
-import java.net.URL;
 
 public class UpdatePanel extends JPanel {
     LoadingCircle circle;
@@ -58,6 +58,22 @@ public class UpdatePanel extends JPanel {
         this.circle.setText(text);
         if (update.uri != null)
             this.bottomPanel.add(new LinkButton(update.ea ? "Early Access ausprobieren" : "Updaten", update.uri));
+    }
+
+    /**
+     * If the <code>preferredSize</code> has been set to a
+     * non-<code>null</code> value just returns it.
+     * If the UI delegate's <code>getPreferredSize</code>
+     * method returns a non <code>null</code> value then return that;
+     * otherwise defer to the component's layout manager.
+     *
+     * @return the value of the <code>preferredSize</code> property
+     * @see #setPreferredSize
+     * @see ComponentUI
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(super.getPreferredSize().width, 50);
     }
 }
 
