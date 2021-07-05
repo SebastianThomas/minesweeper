@@ -58,6 +58,7 @@ public class UpdatePanel extends JPanel {
         this.circle.setText(text);
         if (update.uri != null)
             this.bottomPanel.add(new LinkButton(update.ea ? "Early Access ausprobieren" : "Updaten", update.uri));
+        this.revalidate();
     }
 
     /**

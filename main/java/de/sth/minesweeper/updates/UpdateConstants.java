@@ -1,7 +1,7 @@
 package de.sth.minesweeper.updates;
 
 public abstract class UpdateConstants {
-    public static final String currentVersion = "v4.8.1-ea";
+    public static final String currentVersion = "v4.8.2-ea";
 
     enum UpdateOptions {
         /**
@@ -31,6 +31,10 @@ public abstract class UpdateConstants {
          * A new Minor update is available
          */
         UPDATE_TO_MINOR,
+        /**
+         * A new patch is available
+         */
+        UPDATE_TO_PATCH,
 
         /**
          * Either something went wrong or you are in development; so you have a newer version than published.
@@ -43,8 +47,9 @@ public abstract class UpdateConstants {
                 case UPDATE_FROM_EA_TO_FULL -> "The full update for your EA-preview is available!";
                 case UPDATE_TO_NEW_EA -> "THERE IS ANOTHER Early Access RELEASE";
                 case UP_TO_DATE_WITHOUT_EA -> "You have the newest full release";
-                case UPDATE_TO_MAJOR -> "There is a new Major patch available";
-                case UPDATE_TO_MINOR -> "There is a new Minor patch available";
+                case UPDATE_TO_MAJOR -> "There is a new Major update available";
+                case UPDATE_TO_MINOR -> "There is a new Minor update available";
+                case UPDATE_TO_PATCH -> "There is a new patch available";
                 default -> "An error occurred";
             };
         }

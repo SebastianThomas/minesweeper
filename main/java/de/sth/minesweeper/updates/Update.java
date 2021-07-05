@@ -46,11 +46,12 @@ public class Update {
         }
 
         String latestRelease = getLatestRelease(res);
+        String latestEARelease = getLatestEARelease(res);
 
         Logger.getInstance().log("Current release: " + UpdateConstants.currentVersion);
         Logger.getInstance().log("Found latest release: " + latestRelease + "; latest EA release: " + getLatestEARelease(res));
 
-        if (Objects.equals(getLatestEARelease(res), UpdateConstants.currentVersion)) {
+        if (getLatestEARelease(res).equals(UpdateConstants.currentVersion)) {
             System.out.println("Have latest release (might be an Early Access version)");
             return new Update(UP_TO_DATE, isEA(UpdateConstants.currentVersion), null);
         } else if (Objects.equals(getLatestRelease(res) + "-ea", UpdateConstants.currentVersion)) {
@@ -74,7 +75,18 @@ public class Update {
             // Minor patch available
             System.out.println("New MINOR patch");
             return new Update(UPDATE_TO_MINOR, false, getLatestRelease(res));
+        } else if (getReleasePatchVersion(latestRelease) > getReleasePatchVersion(UpdateConstants.currentVersion)) {
+            System.out.println("New patch available");
+            return new Update(UPDATE_TO_PATCH, false, getLatestRelease(res));
+        } else if (getReleasePatchVersion(latestEARelease) > getReleasePatchVersion(UpdateConstants.currentVersion) && isEA(UpdateConstants.currentVersion)) {
+            System.out.println("New EA patch available");
+            return new Update(UPDATE_TO_PATCH, false, getLatestEARelease(res));
         } else {
+            System.out.println(latestRelease);
+            System.out.println(UpdateConstants.currentVersion);
+            System.out.println(getReleasePatchVersion(latestRelease));
+            System.out.println(getReleasePatchVersion(UpdateConstants.currentVersion));
+
             // Problem ??
             System.out.println("Are you in development? Otherwise report the following as a bug (https://github.com/SebastianThomas/minesweeper/issues/new):");
             System.out.println("Latest version: " + getLatestEARelease(res) + "; Current version: " + UpdateConstants.currentVersion + "; Time: " + new Date().getTime());
@@ -88,11 +100,26 @@ public class Update {
     }
 
     public static int getReleaseMinorVersion(String version) {
+        System.out.println(version);
+
         int firstIndex = version.indexOf('.');
-        int secondIndex = version.substring(firstIndex + 1).indexOf('.') + firstIndex;
-        if (isEA(version)) secondIndex = version.indexOf('-');
+        int secondIndex = version.substring(firstIndex + 1).indexOf('.');
+
+        if (secondIndex == -1) secondIndex = version.length();
+        else secondIndex += firstIndex + 1;
         // "vXXX.YYY.ZZZ"
-        return Integer.parseInt(version.substring(firstIndex + 1, secondIndex == firstIndex - 1 ? version.length() : secondIndex));
+        return Integer.parseInt(version.substring(firstIndex + 1, secondIndex));
+    }
+
+    public static int getReleasePatchVersion(String version) {
+        int firstIndex = version.indexOf('.');
+        int secondIndex = version.substring(firstIndex + 1).indexOf('.');
+        int thirdIndex = isEA(version) ? version.indexOf('-') : version.length();
+        if (secondIndex == -1) return 0;
+        secondIndex += firstIndex + 1;
+        int patchVersion = Integer.parseInt(version.substring(secondIndex + 1, thirdIndex));
+        System.out.println(patchVersion);
+        return patchVersion;
     }
 
     public static JSONArray getResponse() {
