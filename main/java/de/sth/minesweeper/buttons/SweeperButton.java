@@ -2,6 +2,7 @@ package de.sth.minesweeper.buttons;
 
 import de.sth.minesweeper.BombException;
 import de.sth.minesweeper.MineSweeper;
+import de.sth.minesweeper.constants.ColorConstant;
 import de.sth.minesweeper.stats.GameStatistic;
 
 import javax.swing.*;
@@ -32,7 +33,6 @@ public abstract class SweeperButton extends JButton {
         this.revealed = false;
         this.rightClicked = false;
 
-
         this.game = sweeper;
         this.stats = stats;
         this.x = x;
@@ -41,7 +41,8 @@ public abstract class SweeperButton extends JButton {
         this.height = height;
 
         this.setSize(this.width, this.height);
-        this.setBackground(new Color(20, 20, 20));
+        this.setBackground((this.x + this.y) % 2 == 0 ? ColorConstant.BUTTON_UNREVEALED_LIGHT : ColorConstant.BUTTON_UNREVEALED_DARK);
+
         this.setFocusable(false);
 
         this.addActionListener(event -> {
@@ -52,6 +53,8 @@ public abstract class SweeperButton extends JButton {
     }
 
     public void emitReveal() {
+        this.setBackground((this.x + this.y) % 2 == 0 ? ColorConstant.BUTTON_REVEALED_LIGHT : ColorConstant.BUTTON_REVEALED_DARK);
+
         try {
             // If current button is not revealed, and the game is still running
             if (!this.revealed && !this.game.gameOver && !this.rightClicked) {

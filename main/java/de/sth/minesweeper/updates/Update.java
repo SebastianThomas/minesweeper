@@ -71,22 +71,17 @@ public class Update {
             // Major patch available
             System.out.println("New MAJOR patch");
             return new Update(UPDATE_TO_MAJOR, false, getLatestRelease(res));
-        } else if (getReleaseMinorVersion(latestRelease) > getReleaseMinorVersion(UpdateConstants.currentVersion)) {
+        } else if (getReleaseMinorVersion(latestRelease) > getReleaseMinorVersion(UpdateConstants.currentVersion) && getReleaseMajorVersion(latestRelease) == getReleaseMajorVersion(UpdateConstants.currentVersion)) {
             // Minor patch available
             System.out.println("New MINOR patch");
             return new Update(UPDATE_TO_MINOR, false, getLatestRelease(res));
-        } else if (getReleasePatchVersion(latestRelease) > getReleasePatchVersion(UpdateConstants.currentVersion)) {
+        } else if (getReleasePatchVersion(latestRelease) > getReleasePatchVersion(UpdateConstants.currentVersion) && getReleaseMajorVersion(latestRelease) == getReleaseMajorVersion(UpdateConstants.currentVersion) && getReleaseMinorVersion(latestRelease) == getReleaseMinorVersion(UpdateConstants.currentVersion)) {
             System.out.println("New patch available");
             return new Update(UPDATE_TO_PATCH, false, getLatestRelease(res));
         } else if (getReleasePatchVersion(latestEARelease) > getReleasePatchVersion(UpdateConstants.currentVersion) && isEA(UpdateConstants.currentVersion)) {
             System.out.println("New EA patch available");
             return new Update(UPDATE_TO_PATCH, false, getLatestEARelease(res));
         } else {
-            System.out.println(latestRelease);
-            System.out.println(UpdateConstants.currentVersion);
-            System.out.println(getReleasePatchVersion(latestRelease));
-            System.out.println(getReleasePatchVersion(UpdateConstants.currentVersion));
-
             // Problem ??
             System.out.println("Are you in development? Otherwise report the following as a bug (https://github.com/SebastianThomas/minesweeper/issues/new):");
             System.out.println("Latest version: " + getLatestEARelease(res) + "; Current version: " + UpdateConstants.currentVersion + "; Time: " + new Date().getTime());
@@ -100,8 +95,6 @@ public class Update {
     }
 
     public static int getReleaseMinorVersion(String version) {
-        System.out.println(version);
-
         int firstIndex = version.indexOf('.');
         int secondIndex = version.substring(firstIndex + 1).indexOf('.');
 
@@ -117,9 +110,7 @@ public class Update {
         int thirdIndex = isEA(version) ? version.indexOf('-') : version.length();
         if (secondIndex == -1) return 0;
         secondIndex += firstIndex + 1;
-        int patchVersion = Integer.parseInt(version.substring(secondIndex + 1, thirdIndex));
-        System.out.println(patchVersion);
-        return patchVersion;
+        return Integer.parseInt(version.substring(secondIndex + 1, thirdIndex));
     }
 
     public static JSONArray getResponse() {
