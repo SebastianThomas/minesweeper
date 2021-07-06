@@ -53,12 +53,11 @@ public abstract class SweeperButton extends JButton {
     }
 
     public void emitReveal() {
-        this.setBackground((this.x + this.y) % 2 == 0 ? ColorConstant.BUTTON_REVEALED_LIGHT : ColorConstant.BUTTON_REVEALED_DARK);
-
         try {
             // If current button is not revealed, and the game is still running
             if (!this.revealed && !this.game.gameOver && !this.rightClicked) {
                 this.revealed = true;
+                this.setBackground((this.x + this.y) % 2 == 0 ? ColorConstant.BUTTON_REVEALED_LIGHT : ColorConstant.BUTTON_REVEALED_DARK);
                 this.reveal();
                 this.game.newReveal(this, this.x, this.y);
             }
