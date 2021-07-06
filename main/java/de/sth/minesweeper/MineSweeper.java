@@ -26,7 +26,7 @@ public class MineSweeper extends JPanel {
     public static int BOMBS = 99;
     public static Difficulty DIFFICULTY;
     // Game width
-    public static int GAME_SIZE = 950;
+    public static int GAME_SIZE = 980;
     // Game stats
     private final GameStatistic statistic;
     // Game over = false (at the beginning)
