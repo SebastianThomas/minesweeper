@@ -26,7 +26,7 @@ public class MineSweeper extends JPanel {
     public static int BOMBS = 99;
     public static Difficulty DIFFICULTY;
     // Game width
-    public static int GAME_WIDTH = 900;
+    public static int GAME_SIZE = 950;
     // Game stats
     private final GameStatistic statistic;
     // Game over = false (at the beginning)
@@ -76,8 +76,8 @@ public class MineSweeper extends JPanel {
                 // If field == bomb then BombButton else EmptyButton
                 buttonMap.put(
                         i * COLS + j, this.field[i][j] ?
-                                new BombSweeperButton(this, statistic, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS) :
-                                new EmptySweeperButton(this, statistic, i, j, GAME_WIDTH / COLS, GAME_WIDTH / ROWS, bombsAround)
+                                new BombSweeperButton(this, statistic, i, j, GAME_SIZE / COLS, GAME_SIZE / ROWS) :
+                                new EmptySweeperButton(this, statistic, i, j, GAME_SIZE / COLS, GAME_SIZE / ROWS, bombsAround)
                 );
             }
         }
@@ -122,7 +122,7 @@ public class MineSweeper extends JPanel {
         frame.getRootPane().setDefaultButton(topPanel.getStartAgainButton());
 
         frame.add(container);
-        frame.setSize(1050, 1000);
+        frame.setSize(GAME_SIZE, GAME_SIZE + 100);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
