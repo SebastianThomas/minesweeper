@@ -127,11 +127,35 @@ public abstract class SweeperButton extends JButton {
         }
     }
 
+    public boolean isRevealed() {
+        return this.revealed;
+    }
+
+
+    public boolean isRevealedOrRightClicked() {
+        return this.revealed || this.rightClicked;
+    }
+
+    public boolean isRightClicked() {
+        return this.rightClicked;
+    }
+
     public abstract void reveal() throws BombException;
 
     public abstract void reveal(boolean gameOver) throws BombException;
 
     public abstract int getBombsAround() throws UnsupportedOperationException;
+
+    /**
+     * Returns a string representation of this component and its values.
+     *
+     * @return a string representation of this component
+     * @since 1.0
+     */
+    @Override
+    public String toString() {
+        return "x=" + this.x + "&y=" + this.y + " instance of " + this.getClass();
+    }
 }
 
 class SweeperButtonMouseAdapter implements MouseListener {

@@ -6,6 +6,7 @@ import de.sth.minesweeper.buttons.SweeperButton;
 import de.sth.minesweeper.constants.ColorConstant;
 import de.sth.minesweeper.difficulties.Difficulty;
 import de.sth.minesweeper.logging.Logger;
+import de.sth.minesweeper.solving.AI;
 import de.sth.minesweeper.stats.GameStatistic;
 import de.sth.minesweeper.timer.TimerPanel;
 
@@ -94,6 +95,10 @@ public class MineSweeper extends JPanel {
         this.rightClicked = new HashSet<>();
 
         if (revealFirstSelected) this.revealFirstZero();
+
+        // TODO
+        boolean solveByAISelected = true;
+        if (solveByAISelected) this.solveByAI(revealFirstSelected);
     }
 
     public static void start(boolean revealFirstSelected, Difficulty difficulty) {
@@ -155,6 +160,15 @@ public class MineSweeper extends JPanel {
         } catch (Exception ignored) {
             revealFirstZero();
         }
+    }
+
+    public void solveByAI(boolean revealFirstZeroSelected) {
+        if (!revealFirstZeroSelected) this.revealFirstZero();
+
+        AI aiPlayer = new AI(this);
+        int x = 3;
+        int y = 5;
+        System.out.println(aiPlayer.getSaveCalls(x, y).toString());
     }
 
     public int[] getNewPos() {
@@ -263,6 +277,17 @@ public class MineSweeper extends JPanel {
 
         Logger.getInstance().log("Save statistics: \n" + this.statistic.toJSONObject().toString(4));
         this.statistic.save();
+    }
+
+    public SweeperButton[][] getButtons() {
+        SweeperButton[][] b = new SweeperButton[ROWS][COLS];
+        for (Map.Entry<Integer, SweeperButton> e : buttonMap.entrySet()) {
+            int key = e.getKey();
+            if (key - key % ROWS != 0)
+                b[key / (key - (key % ROWS))][key % ROWS] = e.getValue();
+            else b[0][key % ROWS] = e.getValue();
+        }
+        return b;
     }
 }
 
