@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class MineSweeper extends JPanel {
     private boolean[][] field;
     private int revealed;
     private int nrOfRevealedFlags;
+    private boolean useFlags;
 
     public MineSweeper(TopPanel topPanel, BottomPanel bottomPanel, boolean revealFirstSelected) {
         this.revealed = 0;
@@ -107,11 +109,13 @@ public class MineSweeper extends JPanel {
         JPanel container = new JPanel();
 
         // Panels
-        TopPanel topPanel = new TopPanel(frame, revealFirstSelected);
+        TopPanel topPanel = new TouchTopPanel(frame, revealFirstSelected);
         BottomPanel bottomPanel = new BottomPanel();
 
         // Init game panel
         MineSweeper mineSweeperGame = new MineSweeper(topPanel, bottomPanel, revealFirstSelected);
+
+        topPanel.setSweeperGame(mineSweeperGame);
 
         container.setLayout(new BorderLayout());
         container.add(topPanel, BorderLayout.NORTH);
@@ -128,6 +132,14 @@ public class MineSweeper extends JPanel {
         frame.setLocationRelativeTo(null);
 
         frame.setVisible(true);
+    }
+
+    public boolean useFlags() {
+        return useFlags;
+    }
+
+    public void setUseFlags(boolean useFlags) {
+        this.useFlags = useFlags;
     }
 
     public void revealFirstZero() {
@@ -268,7 +280,6 @@ public class MineSweeper extends JPanel {
 
 class TopPanel extends JPanel {
     private final boolean revealFirstSelected;
-
     private final JFrame frameToDispose;
     private final JButton startAgainButton;
     private final JButton backToMainMenuButton;
@@ -276,11 +287,15 @@ class TopPanel extends JPanel {
     private final JLabel flagsLeft;
     private final TimerPanel timerPanel;
 
+    protected MineSweeper sweeperGame;
+
+    protected boolean useFlags;
     private boolean gameOver;
 
     public TopPanel(JFrame frameToDispose, boolean revealFirstSelected) {
         this.gameOver = false;
         this.revealFirstSelected = revealFirstSelected;
+        this.useFlags = false;
 
         this.setBackground(ColorConstant.BG_Color);
         this.setForeground(ColorConstant.FG_LIGHTER_COLOR);
@@ -312,6 +327,16 @@ class TopPanel extends JPanel {
         this.backToMainMenuButton.addActionListener(e -> {
             this.returnToMainMenu();
         });
+    }
+
+    public void setSweeperGame(MineSweeper game) {
+        this.sweeperGame = game;
+        this.setUseFlags(true);
+    }
+
+    public void setUseFlags(boolean useFlags) {
+        this.sweeperGame.setUseFlags(useFlags);
+        this.useFlags = useFlags;
     }
 
     public void setFlagsLeft(int flagsLeft) {
@@ -356,8 +381,42 @@ class TopPanel extends JPanel {
     }
 }
 
+class TouchTopPanel extends TopPanel {
+    // "https://www.freepik.com"
+    public static String BOMB_FILE_PATH = "buttons/bomb.png";
+    // Vectors Market
+    public static String FLAG_FILE_PATH = "buttons/flag_icon.png";
+
+    private final JButton useFlagButton;
+
+    public TouchTopPanel(JFrame frameToDispose, boolean revealFirstSelected) {
+        super(frameToDispose, revealFirstSelected);
+
+        this.useFlagButton = new JButton();
+        this.useFlagButton.addActionListener(e -> this.setUseFlags(!this.useFlags));
+        this.add(this.useFlagButton);
+    }
+
+    @Override
+    public void setUseFlags(boolean useFlags) {
+        System.out.println("Set use flags: " + useFlags);
+        super.setUseFlags(useFlags);
+        System.out.println(this.useFlags);
+
+        String filePath = useFlags ? FLAG_FILE_PATH : BOMB_FILE_PATH;
+        try {
+            URL u = this.getClass().getResource(filePath);
+            if (u == null) throw new NullPointerException("Image not found");
+            ImageIcon icon = new ImageIcon(u);
+            this.useFlagButton.setIcon(icon);
+        } catch (NullPointerException e) {
+            this.useFlagButton.setText(useFlags ? "F" : "B");
+        }
+    }
+}
+
 class BottomPanel extends JPanel {
-    private JLabel error;
+    private final JLabel error;
 
     public BottomPanel() {
         this.setBackground(ColorConstant.BG_Color);

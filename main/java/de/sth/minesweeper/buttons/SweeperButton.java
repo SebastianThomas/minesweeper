@@ -47,7 +47,8 @@ public abstract class SweeperButton extends JButton {
 
         this.addActionListener(event -> {
             this.stats.incrementMoves();
-            this.emitReveal();
+            if (this.game.useFlags()) this.rightClick();
+            else this.emitReveal();
         });
         this.addMouseListener(new SweeperButtonMouseAdapter(this));
     }
